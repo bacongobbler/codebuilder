@@ -42,6 +42,9 @@ REPO_DIR="${ROOT_DIR}/${REPO}"
 BUILD_DIR="${REPO_DIR}/build"
 CACHE_DIR="${REPO_DIR}/cache"
 
+mkdir -p $BUILD_DIR
+mkdir -p $CACHE_DIR
+
 # create temporary directory inside the build dir for this push
 TMP_DIR=$(mktemp -d -p $BUILD_DIR)
 
