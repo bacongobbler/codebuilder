@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+indent() {
+    echo "       $@"
+}
+
+puts-step() {
+    echo "-----> $@"
+}
+
+puts-warn() {
+    echo " !     $@"
+}
+
+puts-error() {
+    echo " !!!   $@"
+}
+
+usage() {
+    echo "Usage: $0 <user> <repo> <sha>"
+}
+
+if [ $# -ne $ARGS ]; then
+    usage
+    exit 1
+fi
+
+REPO=$1
+GIT_SHA=$2
+SHORT_SHA=${GIT_SHA:0:8}
+USER=$3
+FINGERPRINT=$4
+
+APP_NAME="${REPO%.*}"
+
+cd $(dirname $0)/.. # ensure we are in the root dir
+
+ROOT_DIR=$(pwd)
+REPO_DIR="${ROOT_DIR}/${REPO}"
+BUILD_DIR="${REPO_DIR}/build"
+CACHE_DIR="${REPO_DIR}/cache"
+
+# create temporary directory inside the build dir for this push
+TMP_DIR=$(mktemp -d -p $BUILD_DIR)
+
+cd $REPO_DIR
+git archive $GIT_SHA | tar -xmC $TMP_DIR
+
+# switch to app context
+cd $TMP_DIR
+
+USING_DOCKERFILE=false
+
+if [ ! -f Dockerfile ]; then
+    puts-error "No Dockerfile found in root dir. Exiting."
+    exit 1
+fi
+
+# define image name
+IMAGE_NAME="$APP_NAME:git-$SHORT_SHA"
+TMP_IMAGE="registry:5000/$IMAGE_NAME"
+
+puts-step "Building Docker image"
+JOB=$(docker build -t $TMP_IMAGE .)
+
+puts-step "Pushing image to registry"
+docker push $TMP_IMAGE
+
+puts-step "Launching..."
+helm install /usr/local/share/chart.shim
+
+indent "done, $IMAGE_NAME deployed"
+
+# cleanup
+cd $REPO_DIR
+git gc &>/dev/null
+rm -rf $TMP_DIR
+if [ -n "$JOB" ]; then
+  docker rm -f $JOB &>/dev/null
+fi

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+/usr/bin/ssh-keygen -A
+
+gitreceive init
+
+exec $@

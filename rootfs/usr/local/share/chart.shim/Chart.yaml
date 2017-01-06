@@ -1,0 +1,7 @@
+name: appname
+home: https://deis.com
+version: v0.1.0
+description: Sample app for show and tell.
+maintainers:
+  - name: Deis Team
+    email: engineering@deis.com
