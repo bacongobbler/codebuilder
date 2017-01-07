@@ -28,26 +28,34 @@ Running the server:
 
 ```
 # ensure tiller is running on the cluster
-helm init
-kubectl create -f deis3.yaml
+$ helm init
+$ kubectl create -f deis3.yaml
 ```
 
 Then, to push to it:
 
 ```
-cat ~/.ssh/id_rsa.pub | kubectl exec -ic deis3 deis3 gitreceive upload-key bacongobbler
-git clone https://github.com/deis/example-dockerfile-python
-cd example-dockerfile-python
-git remote add deis3 ssh://git@k8s.local:2222/appname
-git push deis3 master
+$ cat ~/.ssh/id_rsa.pub | kubectl exec -ic deis3 deis3 gitreceive upload-key bacongobbler
+$ git clone https://github.com/deis/example-dockerfile-python
+$ cd example-dockerfile-python
+$ git remote add deis3 ssh://git@k8s.local:2222/appname
+$ git push deis3 master
+```
+
+After the push "succeeds" (see Known Issues, bullet #1), check that there's a new release in helm:
+
+```
+$ helm list
+NAME            REVISION        UPDATED                         STATUS          CHART         
+musty-rabbit    1               Fri Jan  6 21:12:47 2017        DEPLOYED        appname-v0.1.0
 ```
 
 ## Known Issues
 
 There are a few known issues with this concept that need addressing:
 
+ - The kubelets cannot pull the image from the registry in the pod. This is the biggest blocker for this concept to work, but it can be mitigated with an off-cluster registry.
  - only Dockerfile applications are supported at this time, so there's no buildpack support.
  - need to upload your keys via `kubectl exec` (this might actaully be a good thing).
  - deis3 service is not of type loadbalancer, so it is not exposed by default. I've been just using nodePorts to connect.
- - The kubelets cannot pull the image from the registry in the pod.
  - No `helm upgrade` support (meaning apps can only be deployed once)
