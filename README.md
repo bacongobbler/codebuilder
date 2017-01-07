@@ -11,7 +11,7 @@ Underneath, this project is a combination of:
 
  - sshd
  - @progrium's [gitreceive](https://progrium/gitreceive), which is the scaffolding around authenticating and executing the builder when `git push` is received
- - A heavily forked incarnation of Deis v1's [builder](https://github.com/deis/deis/blob/master/builder/rootfs/etc/confd/templates/builder)
+ - A heavily forked reincarnation of Deis v1's [builder](https://github.com/deis/deis/blob/master/builder/rootfs/etc/confd/templates/builder)
  - Docker's [Registry v2](https://github.com/docker/distribution) to host the images built by the builder
  - [Helm](https://github.com/kubernetes/helm), which deploys the image onto the cluster
 
