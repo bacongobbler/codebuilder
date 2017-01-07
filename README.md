@@ -17,6 +17,9 @@ Underneath, this project is a combination of:
 
 ## How it Works
 
+The project is simply the `deis3` container hosting the sshd server w/ gitreceive and the builder,
+and another separate `registry` container running in the same pod.
+
 After adding your SSH key to the server (see Usage), when you run `git push` builder will build the
 docker image. After it finishes building, builder then pushes the image to the registry which is
 running in the same pod. Helm is then told to install a chart with that image, which is deployed
