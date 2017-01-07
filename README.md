@@ -1,7 +1,11 @@
 # Deis 3 Concept
 
 This project demonstrates a bare-bones approach to Deis Workflow. It takes the simplicity of
-`git push` that Workflow provides and deploys the application source code using Helm.
+`git push` that Workflow provides and deploys the application source code using Helm. After
+the app has been deployed, the rest is handled by kubernetes, including logging, scaling replicas,
+routing, etc. This gives the user to control the app after it has been deployed, but at the same
+time gives them the flexibility of `git push` with Heroku buildpacks or Dockerfiles.
+
 
 Underneath, this project is a combination of:
 
