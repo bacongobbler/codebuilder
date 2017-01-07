@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    heritage: deis
+  annotations:
+    component.deis.io/version: {{ .Values.version }}
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      containers:
+        - name: {{ .Values.name }}
+          image: deis3.default.svc.cluster.local/{{ .Values.name }}:{{ .Values.version }}
+          imagePullPolicy: {{ default "" .Values.pull_policy | quote }}

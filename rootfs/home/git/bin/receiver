@@ -22,7 +22,9 @@ usage() {
     echo "Usage: $0 <user> <repo> <sha>"
 }
 
-if [ $# -ne $ARGS ]; then
+ARGS=4
+
+if [[ "$#" -ne "$ARGS" ]]; then
     usage
     exit 1
 fi
@@ -54,8 +56,6 @@ git archive $GIT_SHA | tar -xmC $TMP_DIR
 # switch to app context
 cd $TMP_DIR
 
-USING_DOCKERFILE=false
-
 if [ ! -f Dockerfile ]; then
     puts-error "No Dockerfile found in root dir. Exiting."
     exit 1
@@ -63,23 +63,19 @@ fi
 
 # define image name
 IMAGE_NAME="$APP_NAME:git-$SHORT_SHA"
-TMP_IMAGE="registry:5000/$IMAGE_NAME"
+TMP_IMAGE="localhost:5000/$IMAGE_NAME"
 
 puts-step "Building Docker image"
-JOB=$(docker build -t $TMP_IMAGE .)
+docker build -t $TMP_IMAGE .
 
 puts-step "Pushing image to registry"
 docker push $TMP_IMAGE
 
 puts-step "Launching..."
-helm install /usr/local/share/chart.shim
-
-indent "done, $IMAGE_NAME deployed"
+helm install /usr/local/share/chart.shim --namespace $APP_NAME --set name="$APP_NAME",version="git-$SHORT_SHA"
+indent "done, $IMAGE_NAME deployed to Kubernetes"
 
 # cleanup
 cd $REPO_DIR
 git gc &>/dev/null
 rm -rf $TMP_DIR
-if [ -n "$JOB" ]; then
-  docker rm -f $JOB &>/dev/null
-fi

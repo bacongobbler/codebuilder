@@ -19,12 +19,12 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DF1F24 && \
     apt-get clean -y
 
 # install docker client
-RUN curl https://get.docker.com/builds/Linux/x86_64/docker-1.12.2.tgz | tar xz && \
-    mv docker/* /bin && \
-    rm -rf docker
+RUN curl https://get.docker.com/builds/Linux/x86_64/docker-1.10.3.tgz | tar xz
 
 # install helm
-
+RUN curl http://storage.googleapis.com/kubernetes-helm/helm-canary-linux-amd64.tar.gz | tar xz && \
+    mv linux-amd64/helm /bin && \
+    rm -rf linux-amd64
 
 COPY rootfs /
 
