@@ -59,9 +59,24 @@ git archive $GIT_SHA | tar -xmC $TMP_DIR
 # switch to app context
 cd $TMP_DIR
 
+# if no Dockerfile is present, use slugbuilder to compile a heroku slug
+# and write out a Dockerfile to use that slug
 if [ ! -f Dockerfile ]; then
-    puts-error "No Dockerfile found in root dir. Exiting."
-    exit 1
+    # give slug group ownership of TMP_DIR and CACHE_DIR.
+    chown -R :2000 $TMP_DIR
+    chown :2000 $CACHE_DIR
+    # TMP_DIR is created using mktemp, which sets permissions to 700. Since
+    # we share this with the slug group, the slug group needs to be able to
+    # work with it.
+    chmod g+rwx $TMP_DIR $CACHE_DIR
+
+    # build the application and attach to the process
+    JOB=$(docker run -de SOURCE_VERSION="$GIT_SHA" -v "$TMP_DIR/tmp/app" -v "$CACHE_DIR:/tmp/cache" deis/slugrunner)
+    docker attach $JOB
+
+    # copy out the compiled slug
+    docker cp $JOB:/tmp/slug.tgz $TMP_DIR
+    echo "FROM deis/slugrunner" > ./Dockerfile
 fi
 
 # define image name

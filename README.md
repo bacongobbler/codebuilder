@@ -40,27 +40,47 @@ Then, to push to it:
 ```
 $ # temporary workaround, add a password to the git user
 $ kubectl exec -itc deis3 deis3 passwd git
-$ cat ~/.ssh/id_rsa.pub | kubectl exec -ic deis3 deis3 gitreceive upload-key bacongobbler
+$ cat ~/.ssh/id_rsa.pub | ssh git@k8s.cluster "gitreceive upload-key bacongobbler"
 $ git clone https://github.com/deis/example-dockerfile-python
 $ cd example-dockerfile-python
-$ git remote add deis3 ssh://git@k8s.local:2222/appname
+$ git remote add deis3 ssh://git@k8s.cluster/appname
 $ git push deis3 master
 ```
 
-After the push "succeeds" (see Known Issues, bullet #1), check that there's a new release in helm:
+After the push succeeds, check that there's a new release in helm:
 
 ```
 $ helm list
 NAME            REVISION        UPDATED                         STATUS          CHART         
-musty-rabbit    1               Fri Jan  6 21:12:47 2017        DEPLOYED        appname-v0.1.0
+fun-dragon      1               Tue Jan 10 22:00:55 2017        DEPLOYED        appname-v0.1.0
+```
+
+And that the app exists in its namespace:
+
+```
+$ kubectl --namespace appname get deployment,service,pod
+NAME             DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deploy/appname   1         1         1            1           2m
+NAME          CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+svc/appname   10.247.27.59   <none>        80/TCP    2m
+NAME                          READY     STATUS    RESTARTS   AGE
+po/appname-3356271522-5pr91   1/1       Running   0          2m
+```
+
+If you're running the [Deis Router](https://github.com/deis/router) in the cluster, you can then
+view the app via
+
+```
+$ curl appname.deis-router.k8s.cluster
+<h1>Powered by Deis</h1>
 ```
 
 ## Known Issues
 
 There are a few known issues with this concept that need addressing:
 
- - The kubelets cannot pull the image from the registry in the pod. This is the biggest blocker for this concept to work, but it can be mitigated with an off-cluster registry.
- - only Dockerfile applications are supported at this time, so there's no buildpack support.
- - need to upload your keys via `kubectl exec` (this might actaully be a good thing).
- - deis3 service is not of type loadbalancer, so it is not exposed by default. I've been just using nodePorts to connect.
- - No `helm upgrade` support (meaning apps can only be deployed once)
+ - You need to upload your keys via `kubectl exec` (this might actaully be a good thing).
+ - SSH keys need to be backed by a configmap; currently SSH keys are stored locally and are lost when the pod is destroyed.
+   - same applies to the SSH host keys; they should be backed by a configmap.
+ - No `helm upgrade` support is available at this time (meaning apps can only be deployed once).
+ - "appname-v0.1.0" is hardcoded as the chart name. This is more of a visual bug.
