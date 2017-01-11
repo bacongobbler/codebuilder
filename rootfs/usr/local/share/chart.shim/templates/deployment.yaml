@@ -23,5 +23,5 @@ spec:
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: deis3.default.svc.cluster.local/{{ .Values.name }}:{{ .Values.version }}
+          image: {{ .Values.registry }}/{{ .Values.name }}:{{ .Values.version }}
           imagePullPolicy: {{ default "" .Values.pull_policy | quote }}

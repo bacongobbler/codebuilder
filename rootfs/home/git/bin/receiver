@@ -72,7 +72,7 @@ puts-step "Pushing image to registry"
 docker push $TMP_IMAGE
 
 puts-step "Launching..."
-helm install /usr/local/share/chart.shim --namespace $APP_NAME --set name="$APP_NAME",version="git-$SHORT_SHA"
+helm install /usr/local/share/chart.shim --namespace $APP_NAME --set name="$APP_NAME",version="git-$SHORT_SHA",registry="$DEIS3_SERVICE_HOST:$DEIS3_SERVICE_PORT_REGISTRY"
 indent "done, $IMAGE_NAME deployed to Kubernetes"
 
 # cleanup
