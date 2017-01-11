@@ -52,7 +52,7 @@ generate_fingerprint() {
 install_authorized_key() {
   declare key="$1" name="$2" home_dir="$3" git_user="$4" self="$5"
   local fingerprint="$(echo "$key" | generate_fingerprint)"
-  local forced_command="GITUSER=$git_user KUBERNETES_SERVICE_HOST=$KUBERNETES_SERVICE_HOST KUBERNETES_SERVICE_PORT=$KUBERNETES_SERVICE_PORT $self run $name $fingerprint"
+  local forced_command="GITUSER=$git_user $self run $name $fingerprint"
   local key_options="command=\"$forced_command\",no-agent-forwarding,no-pty,no-user-rc,no-X11-forwarding,no-port-forwarding"
   echo "$key_options $key" >> "$home_dir/.ssh/authorized_keys"
 }

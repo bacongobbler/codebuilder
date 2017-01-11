@@ -29,6 +29,9 @@ if [[ "$#" -ne "$ARGS" ]]; then
     exit 1
 fi
 
+# need to explicitly source /etc/environment due to https://github.com/docker/docker/issues/25388
+source /etc/environment
+
 REPO=$1
 GIT_SHA=$2
 SHORT_SHA=${GIT_SHA:0:8}

@@ -38,6 +38,8 @@ $ kubectl create -f deis3.yaml
 Then, to push to it:
 
 ```
+$ # temporary workaround, add a password to the git user
+$ kubectl exec -itc deis3 deis3 passwd git
 $ cat ~/.ssh/id_rsa.pub | kubectl exec -ic deis3 deis3 gitreceive upload-key bacongobbler
 $ git clone https://github.com/deis/example-dockerfile-python
 $ cd example-dockerfile-python
