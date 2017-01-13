@@ -19,7 +19,7 @@ puts-error() {
 }
 
 usage() {
-    echo "Usage: $0 <user> <repo> <sha>"
+    echo "Usage: $0 <repo> <sha>"
 }
 
 ARGS=4
@@ -35,8 +35,6 @@ source /etc/environment
 REPO=$1
 GIT_SHA=$2
 SHORT_SHA=${GIT_SHA:0:8}
-USER=$3
-FINGERPRINT=$4
 
 APP_NAME="${REPO%.*}"
 

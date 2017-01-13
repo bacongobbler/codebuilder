@@ -15,7 +15,8 @@ absolute_path() {
 # for all users that are allowed to push their repos here. User defaults to $GITUSER, which defaults to 'git'.
 setup_git_user() {
   declare home_dir="$1" git_user="$2"
-  useradd -d "$home_dir" "$git_user" || true
+  addgroup --gid 2000 "$git_user" || true
+  useradd -d "$home_dir" --uid=2000 --gid=2000 "$git_user" || true
   mkdir -p "$home_dir/.ssh"
   touch "$home_dir/.ssh/authorized_keys"
   chown -R "$git_user":"$git_user" "$home_dir"
