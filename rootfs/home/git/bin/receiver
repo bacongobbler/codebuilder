@@ -69,7 +69,7 @@ if [ ! -f Dockerfile ]; then
     chmod g+rwx $TMP_DIR $CACHE_DIR
 
     # build the application and attach to the process
-    JOB=$(docker run -de SOURCE_VERSION="$GIT_SHA" -v "$TMP_DIR/tmp/app" -v "$CACHE_DIR:/tmp/cache" deis/slugrunner)
+    JOB=$(docker run -de SOURCE_VERSION="$GIT_SHA" -v "$TMP_DIR/tmp/app" -v "$CACHE_DIR:/tmp/cache" deis/slugbuilder)
     docker attach $JOB
 
     # copy out the compiled slug
