@@ -1,7 +1,7 @@
-name: appname
-home: https://deis.com
+name: codebuilder
+home: https://github.com/bacongobbler/codebuilder
 version: v0.1.0
-description: Sample app for show and tell.
+description: Chart shim for apps that do not provide a chart.
 maintainers:
   - name: Deis Team
     email: engineering@deis.com

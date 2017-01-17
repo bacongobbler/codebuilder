@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: deis3
+  name: codebuilder
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: deis3
+  name: codebuilder
   labels:
-    app: deis3
+    app: codebuilder
 spec:
-  serviceAccount: deis3
+  serviceAccount: codebuilder
   containers:
-  - name: deis3
-    image: quay.io/bacongobbler/deis3:canary
+  - name: codebuilder
+    image: quay.io/bacongobbler/codebuilder:canary
     imagePullPolicy: Always
     ports:
     - containerPort: 2222
@@ -37,7 +37,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: deis3
+  name: codebuilder
 spec:
   ports:
     - name: http
@@ -47,4 +47,4 @@ spec:
       port: 80
       targetPort: 5000
   selector:
-    app: deis3
+    app: codebuilder

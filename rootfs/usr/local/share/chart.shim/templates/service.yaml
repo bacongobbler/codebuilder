@@ -3,12 +3,7 @@ kind: Service
 metadata:
   name: {{ .Values.name }}
   labels:
-    heritage: deis
-    router.deis.io/routable: "true"
-  annotations:
-    router.deis.io/domains: {{ .Values.name }}
-    router.deis.io/connectTimeout: "10"
-    router.deis.io/tcpTimeout: "1200"
+    heritage: codebuilder
 spec:
   ports:
     - name: http
